@@ -356,7 +356,7 @@ def convertonetable(m,border) :
                         "|\\\\end\\{btabular}"
                         "|&|\\\\\\\\")
 
-    align = { "c" : "center", "l" : "left" , "r" : "right" }
+    align = { "c" : "center", "l" : "left" , "r" : "right" , r"|" : r"|"}
 
     T = tokens.findall(m)
     C = tokens.split(m)
