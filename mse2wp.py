@@ -217,31 +217,28 @@ def extractbody(m) :
     end = re.compile("\\\\end\s*")
     m = end.sub("\\\\end",m)
 
-    beginenddoc = re.compile("\\\\begin\\{document}"
-                          "|\\\\end\\{document}")
+    beginenddoc = re.compile("\\\\begin\\{document}|\\\\end\\{document}")
     parse = beginenddoc.split(m)
     if len(parse)== 1 :
        m = parse[0]
     else :
        m = parse[1]
 
-    """
-      removes comments, replaces double returns with <p> and
-      other returns and multiple spaces by a single space.
-    """
-
     # Substitute markdown header lines of type === and --- with placeholders
     for mdheader in MD:
         mdequals = re.compile("^"+mdheader[0]+"{4,}", re.MULTILINE)
         m = mdequals.sub(mdheader[1], m)
+
+    """
+      removes comments, replaces double returns with <p> and
+      other returns and multiple spaces by a single space.
+    """
 
     for e in esc :
         m = m.replace(e[0],e[1])
 
     comments = re.compile("%.*?\n")
     m=comments.sub(" ",m)
-
-
 
     multiplereturns = re.compile("\n\n+")
     m= multiplereturns.sub ("<p>",m)
@@ -253,8 +250,6 @@ def extractbody(m) :
      between \iftex ... \fi keeps text between
      \ifblog ... \fi
     """
-
-
     ifcommands = re.compile("\\\\iffalse|\\\\ifblog|\\\\iftex|\\\\fi")
     L=ifcommands.split(m)
     I=ifcommands.findall(m)
@@ -332,12 +327,9 @@ def converttables(m) :
 
 
 def convertmacros(m) :
-
-
     comm = re.compile("\\\\[a-zA-Z]*")
     commands = comm.findall(m)
     rest = comm.split(m)
-
 
     r= rest[0]
     for i in range( len (commands) ) :
@@ -349,22 +341,16 @@ def convertmacros(m) :
 
 
 def convertonetable(m,border) :
-
     tokens = re.compile("\\\\begin\\{tabular}\s*\\{.*?}"
                         "|\\\\end\\{tabular}"
                         "|\\\\begin\\{btabular}\s*\\{.*?}"
                         "|\\\\end\\{btabular}"
                         "|&|\\\\\\\\")
-
     align = { "c" : "center", "l" : "left" , "r" : "right" , r"|" : r"|"}
-
     T = tokens.findall(m)
     C = tokens.split(m)
-
-
     L = cb.split(T[0])
     format = L[3]
-
     columns = len(format)
     if border :
         m = "<table border=\"1\" align=center>"
@@ -372,7 +358,6 @@ def convertonetable(m,border) :
         m="<table align = center><tr>"
     p=1
     i=0
-
 
     while T[p-1] != "\\end{tabular}" and T[p-1] != "\\end{btabular}":
         m = m + "<td align="+align[format[i]]+">" + C[p] + "</td>"
@@ -385,12 +370,6 @@ def convertonetable(m,border) :
             i=0
     m = m+ "</tr></table>"
     return (m)
-
-
-
-
-
-
 
 
 def separatemath(m) :
@@ -501,7 +480,6 @@ def convertbeginthm(thm) :
   count[T[thm]] +=1
   inthm = thm
   t = beginthm.replace("_ThmType_",thm.capitalize())
-  t = t.replace("_ThmNumb_",str(count[T[thm]]))
   return(t)
 
 def convertendthm(thm) :
@@ -514,8 +492,6 @@ def convertendthm(thm) :
 def convertlab(m) :
     global inthm
     global ref
-
-
     m=cb.split(m)[1]
     m=m.replace(":","")
     if inthm != "" :
@@ -534,15 +510,11 @@ def convertproof(m) :
 
 
 def convertsection (m) :
-
-
       L=cb.split(m)
-
       """
         L[0] contains the \\section or \\section* command, and
         L[1] contains the section name
       """
-
       if L[0].find("*") == -1 :
           t=section
           count["section"] += 1
@@ -555,16 +527,13 @@ def convertsection (m) :
       t=t.replace("_SecName_",L[1])
       return(t)
 
+
 def convertsubsection (m) :
-
-
         L=cb.split(m)
-
         if L[0].find("*") == -1 :
             t=subsection
         else :
             t=subsectionstar
-
         count["subsection"] += 1
         t=t.replace("_SecNumb_",str(count["section"]) )
         t=t.replace("_SubSecNumb_",str(count["subsection"]) )
@@ -606,19 +575,12 @@ def processtext ( t ) :
                    "|\\\\image\\s*\\{.*?}\\s*\\{.*?}\\s*\\{.*?}"
                    "|\\\\sout\\s*\\{.*?}")
 
-
-
-
-        for s1, s2 in Mnomath :
+        for s1, s2 in Mnomath:
             t=t.replace(s1,s2)
-
 
         ttext = p.split(t)
         tcontrol = p.findall(t)
-
-
         w = ttext[0]
-
 
         i=0
         while i < len(tcontrol) :
@@ -701,12 +663,9 @@ def processfontstyle(w) :
 
 def convertref(m) :
     global ref
-
     p=re.compile("\\\\ref\s*\\{.*?}|\\\\eqref\s*\\{.*?}")
-
     T=p.split(m)
     M=p.findall(m)
-
     w = T[0]
     for i in range(len(M)) :
         t=M[i]
